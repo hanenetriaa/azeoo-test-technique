@@ -2,7 +2,7 @@ Test Technique AZEOO – SDK User Profile
 
 Développement d’un SDK Flutter permettant d’afficher un profil utilisateur, puis intégration dans une application React Native.
 
-📋 Table des matières
+-- Table des matières
 
 Présentation
 
@@ -26,7 +26,7 @@ Captures d’écran
 
 Auteur
 
-🎯 Présentation
+-- Présentation
 
 Ce test technique avait pour objectif de créer un SDK Flutter affichant les informations d’un utilisateur, et de l’intégrer ensuite dans une application React Native composée de deux onglets.
 
@@ -48,7 +48,7 @@ Onglet 1 → saisie de l’ID utilisateur
 
 Onglet 2 → affichage du profil correspondant
 
-🏗 Architecture
+-- Architecture
 
 L’organisation du code suit une logique clairement séparée entre la logique métier, la gestion des données et l’affichage.
 
@@ -71,7 +71,7 @@ UI
 → API / Cache
 → Retour modèle → UI
 
-🛠️ Technologies utilisées
+-- Technologies utilisées
 Flutter
 
 Riverpod (state)
@@ -157,7 +157,7 @@ Gestion des états
 
 Design inspiré d’Azeoo
 
-🎨 Choix techniques
+- Choix techniques
 Pourquoi Riverpod ?
 
 State management clair
@@ -192,7 +192,7 @@ Simple à intégrer
 
 Parfait pour mettre en cache des petites données
 
-💪 Points forts
+- Points forts
 
 Architecture propre et lisible
 
@@ -208,35 +208,19 @@ Code facilement maintenable
 
 App React Native bien structurée
 
-⚠️ Limitations actuelles
-1. CORS sur la version web RN
 
-L’API ne permet pas les appels cross-origin, ce qui provoque une erreur dans un navigateur.
-→ Aucun problème sur Android / iOS.
-
-2. Intégration native Flutter ↔ React Native
-
-Pour une intégration “Add-to-App” complète, une configuration Android/iOS supplémentaire serait nécessaire.
-Dans le cadre du test, j’ai privilégié la clarté et la fonctionnalité.
-
-📸 Captures d’écran
+-- Captures d’écran
 
 Dossier : screenshots/
 
-🎥 Vidéo
 
-Une vidéo de démonstration est disponible :
-video/demo.mp4
-
-👩‍💻 Auteur
+- Auteur
 
 Hanene Triaa
-Étudiante en Master 1 – Epitech
-Développeuse mobile Flutter / React Native
+Étudiante en Master 2 – Epitech
+hanene.triaa@epitech.eu
 
-📧 hanene.triaa@epitech.eu
-
-🙏 Remerciements
+-- Remerciements
 
 Merci à l’équipe AZEOO pour ce test technique très formateur.
 Cela m’a permis de :
