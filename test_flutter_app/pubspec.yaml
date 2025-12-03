@@ -1,0 +1,23 @@
+name: test_flutter_app
+description: App de test pour le SDK User Profile
+publish_to: 'none'
+version: 1.0.0
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # Notre SDK (chemin relatif)
+  user_profile_sdk:
+    path: ../user_profile_sdk
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true

@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AZEOO Test Technique - Gestion de Projet</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+        
+        .project-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .info-card {
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .info-card h3 {
+            color: #4a5568;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .info-card p {
+            color: #2d3748;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .board {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .column {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .column-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        .column-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .badge {
+            background: #e2e8f0;
+            color: #4a5568;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .todo .column-title { color: #718096; }
+        .in-progress .column-title { color: #3182ce; }
+        .review .column-title { color: #d69e2e; }
+        .done .column-title { color: #38a169; }
+        
+        .cards {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            min-height: 100px;
+        }
+        
+        .card {
+            background: #f7fafc;
+            border-radius: 8px;
+            padding: 15px;
+            border-left: 4px solid #cbd5e0;
+            cursor: move;
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+        
+        .card.priority-high { border-left-color: #f56565; }
+        .card.priority-medium { border-left-color: #ed8936; }
+        .card.priority-low { border-left-color: #48bb78; }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 10px;
+        }
+        
+        .card-id {
+            font-size: 12px;
+            color: #718096;
+            font-weight: bold;
+        }
+        
+        .priority-badge {
+            font-size: 11px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        
+        .priority-high { background: #fed7d7; color: #c53030; }
+        .priority-medium { background: #feebc8; color: #c05621; }
+        .priority-low { background: #c6f6d5; color: #276749; }
+        
+        .card-title {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .card-description {
+            font-size: 13px;
+            color: #718096;
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+        
+        .card-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+        }
+        
+        .card-tags {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+        
+        .tag {
+            background: #edf2f7;
+            color: #4a5568;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+        }
+        
+        .time-estimate {
+            color: #718096;
+            font-weight: 500;
+        }
+        
+        .progress-section {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .progress-bar-container {
+            background: #e2e8f0;
+            height: 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .progress-bar {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .legend {
+            display: flex;
+            gap: 30px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+        
+        .legend-label {
+            font-size: 14px;
+            color: #4a5568;
+        }
+        
+        @media (max-width: 768px) {
+            .board {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .dragging {
+            opacity: 0.5;
+        }
+        
+        .icon {
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 AZEOO - Test Technique Flutter SDK</h1>
+            <p style="color: #718096; margin-top: 10px;">Développement d'un SDK Flutter avec intégration React Native</p>
+            
+            <div class="project-info">
+                <div class="info-card">
+                    <h3>Durée estimée</h3>
+                    <p id="totalTime">16 heures</p>
+                </div>
+                <div class="info-card">
+                    <h3>Tâches totales</h3>
+                    <p id="totalTasks">23</p>
+                </div>
+                <div class="info-card">
+                    <h3>Temps restant</h3>
+                    <p id="remainingTime">16h 00m</p>
+                </div>
+                <div class="info-card">
+                    <h3>Statut</h3>
+                    <p style="color: #3182ce;">En préparation</p>
+                </div>
+            </div>
+        </header>
+        
+        <div class="progress-section">
+            <div class="progress-header">
+                <h2 style="color: #2d3748;">Progression du projet</h2>
+                <span id="progressPercent" style="font-size: 24px; font-weight: bold; color: #667eea;">0%</span>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progressBar" style="width: 0%;">
+                    0% complété
+                </div>
+            </div>
+            
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #f56565;"></div>
+                    <span class="legend-label">Priorité Haute</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #ed8936;"></div>
+                    <span class="legend-label">Priorité Moyenne</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #48bb78;"></div>
+                    <span class="legend-label">Priorité Basse</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="board">
+            <!-- TO DO Column -->
+            <div class="column todo" data-status="todo">
+                <div class="column-header">
+                    <div class="column-title">
+                        <span class="icon">📋</span>
+                        <span>À FAIRE</span>
+                    </div>
+                    <span class="badge" id="todoCount">0</span>
+                </div>
+                <div class="cards" id="todoCards"></div>
+            </div>
+            
+            <!-- IN PROGRESS Column -->
+            <div class="column in-progress" data-status="in-progress">
+                <div class="column-header">
+                    <div class="column-title">
+                        <span class="icon">⚡</span>
+                        <span>EN COURS</span>
+                    </div>
+                    <span class="badge" id="inProgressCount">0</span>
+                </div>
+                <div class="cards" id="inProgressCards"></div>
+            </div>
+            
+            <!-- REVIEW Column -->
+            <div class="column review" data-status="review">
+                <div class="column-header">
+                    <div class="column-title">
+                        <span class="icon">👀</span>
+                        <span>EN REVUE</span>
+                    </div>
+                    <span class="badge" id="reviewCount">0</span>
+                </div>
+                <div class="cards" id="reviewCards"></div>
+            </div>
+            
+            <!-- DONE Column -->
+            <div class="column done" data-status="done">
+                <div class="column-header">
+                    <div class="column-title">
+                        <span class="icon">✅</span>
+                        <span>TERMINÉ</span>
+                    </div>
+                    <span class="badge" id="doneCount">0</span>
+                </div>
+                <div class="cards" id="doneCards"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Données des tâches du projet
+        const tasks = [
+            // PHASE 1: PRÉPARATION (2h)
+            {
+                id: 'PREP-1',
+                title: 'Installation Flutter & environnement',
+                description: 'Installer Flutter SDK, Android Studio/Xcode, VS Code avec extensions',
+                priority: 'high',
+                tags: ['setup', 'flutter'],
+                time: '30m',
+                status: 'todo',
+                phase: 'Phase 1: Préparation'
+            },
+            {
+                id: 'PREP-2',
+                title: 'Installation React Native & dépendances',
+                description: 'Setup RN CLI, Node.js, vérifier environnement iOS/Android',
+                priority: 'high',
+                tags: ['setup', 'react-native'],
+                time: '30m',
+                status: 'todo',
+                phase: 'Phase 1: Préparation'
+            },
+            {
+                id: 'PREP-3',
+                title: 'Test de l\'API AZEOO',
+                description: 'Tester l\'endpoint /users/me avec curl, comprendre la structure JSON',
+                priority: 'high',
+                tags: ['api', 'test'],
+                time: '20m',
+                status: 'todo',
+                phase: 'Phase 1: Préparation'
+            },
+            {
+                id: 'PREP-4',
+                title: 'Apprentissage des concepts clés',
+                description: 'Comprendre Riverpod, go_router, architecture propre, DI',
+                priority: 'medium',
+                tags: ['learning', 'architecture'],
+                time: '40m',
+                status: 'todo',
+                phase: 'Phase 1: Préparation'
+            },
+            
+            // PHASE 2: SDK FLUTTER (8h)
+            {
+                id: 'SDK-1',
+                title: 'Créer le projet Flutter Module',
+                description: 'flutter create --template=module user_profile_sdk',
+                priority: 'high',
+                tags: ['flutter', 'sdk', 'setup'],
+                time: '20m',
+                status: 'todo',
+                phase: 'Phase 2: SDK Flutter'
+            },
+            {
+                id: 'SDK-2',
+                title: 'Architecture du projet (Clean Architecture)',
+                description: 'Créer structure: data/domain/presentation, setup DI avec get_it',
+                priority: 'high',
+                tags: ['architecture', 'structure'],
+                time: '45m',
+                status: 'todo',
+                phase: 'Phase 2: SDK Flutter'
+            },
+            {
+                id: 'SDK-3',
+                title: 'Setup Riverpod (State Management)',
+                description: 'Installer riverpod, créer providers de base, comprendre l\'approche',
+                priority: 'high',
+                tags: ['state-management', 'riverpod'],
+                time: '1h',
+                status: 'todo',
+                phase: 'Phase 2: SDK Flutter'
+            },
+            {
+                id: 'SDK-4',
+                title: 'Configuration go_router (Navigation)',
+                description: 'Setup routes, configuration de navigation avancée',
+                priority: 'high',
+                tags: ['navigation', 'routing'],
+                time: '45m',
+                status: 'todo',
+                phase: 'Phase 2: SDK Flutter'
+            },
+            {
+                id: 'SDK-5',
+                title: 'Models & Entities',
+                description: 'Créer UserModel avec json_serializable, UserEntity, mappers',
+                priority: 'high',
+                tags: ['models', 'domain'],
+                time: '30m',
+                status: 'todo',
+                phase: 'Phase 2: SDK Flutter'
+            },
+            {
+                id: 'SDK-6',
+                title: 'API Service (dio)',
+                description: 'Setup Dio, intercepteurs, gestion erreurs, retry logic',
+                priority: 'high',
+                tags: ['api', 'networking'],
+                time: '1h',
+                status: 'todo',
+                phase: 'Phase 2: SDK Flutter'
+            },
+            {
+                id: 'SDK-7',
+                title: 'Cache local (Hive)',
+                description: 'Setup Hive, adapter pour User, stratégie cache-first',
+                priority: 'high',
+                tags: ['cache', 'storage'],
+                time: '1h',
+                status: 'todo',
+                phase: 'Phase 2: SDK Flutter'
+            },
+            {
+                id: 'SDK-8',
+                title: 'Repository Pattern',
+                description: 'UserRepository avec cache + API, gestion états async',
+                priority: 'high',
+                tags: ['repository', 'architecture'],
+                time: '45m',
+                status: 'todo',
+                phase: 'Phase 2: SDK Flutter'
+            },
+            {
+                id: 'SDK-9',
+                title: 'Use Cases',
+                description: 'GetUserProfile, RefreshUserProfile use cases',
+                priority: 'medium',
+                tags: ['domain', 'use-cases'],
+                time: '30m',
+                status: 'todo',
+                phase: 'Phase 2: SDK Flutter'
+            },
+            {
+                id: 'SDK-10',
+                title: 'UI - Profile Screen',
+                description: 'Écran profil avec avatar, nom, prénom, design moderne',
+                priority: 'high',
+                tags: ['ui', 'design'],
+                time: '1h 30m',
+                status: 'todo',
+                phase: 'Phase 2: SDK Flutter'
+            },
+            {
+                id: 'SDK-11',
+                title: 'Gestion des états UI',
+                description: 'Loading, erreur, success avec ConsumerWidget',
+                priority: 'high',
+                tags: ['ui', 'state-management'],
+                time: '45m',
+                status: 'todo',
+                phase: 'Phase 2: SDK Flutter'
+            },
+            {
+                id: 'SDK-12',
+                title: 'Méthode SDK publique',
+                description: 'Exposer showUserProfile(userId), configuration SDK',
+                priority: 'high',
+                tags: ['sdk', 'api-public'],
+                time: '30m',
+                status: 'todo',
+                phase: 'Phase 2: SDK Flutter'
+            },
+            
+            // PHASE 3: INTÉGRATION REACT NATIVE (4h)
+            {
+                id: 'RN-1',
+                title: 'Créer projet React Native',
+                description: 'npx react-native init AzeoApp avec TypeScript',
+                priority: 'high',
+                tags: ['react-native', 'setup'],
+                time: '20m',
+                status: 'todo',
+                phase: 'Phase 3: React Native'
+            },
+            {
+                id: 'RN-2',
+                title: 'Intégrer Flutter Module dans RN',
+                description: 'Configuration iOS/Android, liens natifs vers Flutter',
+                priority: 'high',
+                tags: ['integration', 'native'],
+                time: '1h 30m',
+                status: 'todo',
+                phase: 'Phase 3: React Native'
+            },
+            {
+                id: 'RN-3',
+                title: 'Tab Navigator (React Navigation)',
+                description: 'Setup bottom tabs: Input userId + Profile Display',
+                priority: 'high',
+                tags: ['navigation', 'ui'],
+                time: '30m',
+                status: 'todo',
+                phase: 'Phase 3: React Native'
+            },
+            {
+                id: 'RN-4',
+                title: 'Onglet 1: Input UserId',
+                description: 'TextInput + bouton save, gestion state (Context/Redux)',
+                priority: 'high',
+                tags: ['ui', 'state'],
+                time: '30m',
+                status: 'todo',
+                phase: 'Phase 3: React Native'
+            },
+            {
+                id: 'RN-5',
+                title: 'Onglet 2: Flutter View',
+                description: 'Intégrer FlutterView/FragmentActivity, passer userId',
+                priority: 'high',
+                tags: ['integration', 'flutter'],
+                time: '45m',
+                status: 'todo',
+                phase: 'Phase 3: React Native'
+            },
+            {
+                id: 'RN-6',
+                title: 'Communication inter-onglets',
+                description: 'EventEmitter ou Context pour refresh onglet 2',
+                priority: 'medium',
+                tags: ['state', 'communication'],
+                time: '30m',
+                status: 'todo',
+                phase: 'Phase 3: React Native'
+            },
+            
+            // PHASE 4: DOCUMENTATION & LIVRAISON (2h)
+            {
+                id: 'DOC-1',
+                title: 'README complet',
+                description: 'Architecture, choix techniques, installation, screenshots',
+                priority: 'high',
+                tags: ['documentation'],
+                time: '45m',
+                status: 'todo',
+                phase: 'Phase 4: Documentation'
+            },
+            {
+                id: 'DOC-2',
+                title: 'Vidéo de présentation',
+                description: 'Démonstration app, explication choix, points bloquants',
+                priority: 'high',
+                tags: ['presentation', 'video'],
+                time: '45m',
+                status: 'todo',
+                phase: 'Phase 4: Documentation'
+            },
+            {
+                id: 'DOC-3',
+                title: 'Tests & validations finales',
+                description: 'Tester userId 1 et 3, vérifier toutes les features',
+                priority: 'high',
+                tags: ['testing', 'qa'],
+                time: '30m',
+                status: 'todo',
+                phase: 'Phase 4: Documentation'
+            }
+        ];
+        
+        // Fonction pour créer une carte de tâche
+        function createCard(task) {
+            const card = document.createElement('div');
+            card.className = `card priority-${task.priority}`;
+            card.draggable = true;
+            card.dataset.taskId = task.id;
+            
+            card.innerHTML = `
+                <div class="card-header">
+                    <span class="card-id">${task.id}</span>
+                    <span class="priority-badge priority-${task.priority}">
+                        ${task.priority === 'high' ? 'Haute' : task.priority === 'medium' ? 'Moyenne' : 'Basse'}
+                    </span>
+                </div>
+                <div class="card-title">${task.title}</div>
+                <div class="card-description">${task.description}</div>
+                <div class="card-meta">
+                    <div class="card-tags">
+                        ${task.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                    </div>
+                    <span class="time-estimate">⏱️ ${task.time}</span>
+                </div>
+            `;
+            
+            // Drag and drop events
+            card.addEventListener('dragstart', handleDragStart);
+            card.addEventListener('dragend', handleDragEnd);
+            
+            return card;
+        }
+        
+        // Initialiser le tableau
+        function initBoard() {
+            const todoCards = document.getElementById('todoCards');
+            const inProgressCards = document.getElementById('inProgressCards');
+            const reviewCards = document.getElementById('reviewCards');
+            const doneCards = document.getElementById('doneCards');
+            
+            // Charger les tâches depuis localStorage ou utiliser les tâches par défaut
+            let savedTasks = localStorage.getItem('azeooTasks');
+            let currentTasks = savedTasks ? JSON.parse(savedTasks) : tasks;
+            
+            currentTasks.forEach(task => {
+                const card = createCard(task);
+                
+                switch(task.status) {
+                    case 'todo':
+                        todoCards.appendChild(card);
+                        break;
+                    case 'in-progress':
+                        inProgressCards.appendChild(card);
+                        break;
+                    case 'review':
+                        reviewCards.appendChild(card);
+                        break;
+                    case 'done':
+                        doneCards.appendChild(card);
+                        break;
+                }
+            });
+            
+            updateCounts();
+            updateProgress();
+        }
+        
+        // Mise à jour des compteurs
+        function updateCounts() {
+            document.getElementById('todoCount').textContent = document.getElementById('todoCards').children.length;
+            document.getElementById('inProgressCount').textContent = document.getElementById('inProgressCards').children.length;
+            document.getElementById('reviewCount').textContent = document.getElementById('reviewCards').children.length;
+            document.getElementById('doneCount').textContent = document.getElementById('doneCards').children.length;
+            
+            const total = tasks.length;
+            document.getElementById('totalTasks').textContent = total;
+        }
+        
+        // Mise à jour de la progression
+        function updateProgress() {
+            const doneCount = document.getElementById('doneCards').children.length;
+            const totalCount = tasks.length;
+            const percentage = Math.round((doneCount / totalCount) * 100);
+            
+            const progressBar = document.getElementById('progressBar');
+            const progressPercent = document.getElementById('progressPercent');
+            
+            progressBar.style.width = percentage + '%';
+            progressBar.textContent = percentage + '% complété';
+            progressPercent.textContent = percentage + '%';
+            
+            // Calcul du temps restant
+            const completedTasks = Array.from(document.getElementById('doneCards').children);
+            let completedMinutes = 0;
+            
+            completedTasks.forEach(card => {
+                const taskId = card.dataset.taskId;
+                const task = tasks.find(t => t.id === taskId);
+                if (task) {
+                    const time = task.time;
+                    const hours = time.includes('h') ? parseInt(time) * 60 : 0;
+                    const minutes = time.includes('m') ? parseInt(time.match(/(\d+)m/)?.[1] || 0) : 0;
+                    completedMinutes += hours + minutes;
+                }
+            });
+            
+            const totalMinutes = 16 * 60;
+            const remainingMinutes = totalMinutes - completedMinutes;
+            const remainingHours = Math.floor(remainingMinutes / 60);
+            const remainingMins = remainingMinutes % 60;
+            
+            document.getElementById('remainingTime').textContent = `${remainingHours}h ${remainingMins}m`;
+        }
+        
+        // Gestion du drag and drop
+        let draggedElement = null;
+        
+        function handleDragStart(e) {
+            draggedElement = this;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        }
+        
+        function handleDragEnd(e) {
+            this.classList.remove('dragging');
+        }
+        
+        // Permettre le drop sur les colonnes
+        document.querySelectorAll('.cards').forEach(column => {
+            column.addEventListener('dragover', e => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+            });
+            
+            column.addEventListener('drop', e => {
+                e.preventDefault();
+                if (draggedElement) {
+                    column.appendChild(draggedElement);
+                    updateCounts();
+                    updateProgress();
+                    saveTasks();
+                }
+            });
+        });
+        
+        // Sauvegarder l'état des tâches
+        function saveTasks() {
+            const columns = ['todo', 'in-progress', 'review', 'done'];
+            const updatedTasks = [];
+            
+            columns.forEach(status => {
+                const containerId = status === 'in-progress' ? 'inProgressCards' : 
+                                    status === 'review' ? 'reviewCards' : 
+                                    status === 'done' ? 'doneCards' : 'todoCards';
+                const cards = document.getElementById(containerId).children;
+                
+                Array.from(cards).forEach(card => {
+                    const taskId = card.dataset.taskId;
+                    const task = tasks.find(t => t.id === taskId);
+                    if (task) {
+                        updatedTasks.push({ ...task, status });
+                    }
+                });
+            });
+            
+            localStorage.setItem('azeooTasks', JSON.stringify(updatedTasks));
+        }
+        
+        // Initialiser au chargement
+        initBoard();
+    </script>
+</body>
+</html>
